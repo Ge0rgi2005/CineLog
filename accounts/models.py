@@ -3,15 +3,22 @@ from django.db import models
 
 
 class AppUser(AbstractUser):
-    bio = models.TextField(
+    profile_bio = models.TextField(
         blank=True,
         null=True,
         help_text="Write a brief description of your profile here.",
     )
-    avatar = models.ImageField(
-        upload_to='avatars/',
+    profile_avatar = models.ImageField(
+        upload_to='profile_avatars/',
         blank=True,
         null=True,
+    )
+    favourite_genre = models.ForeignKey(
+        'films.Genre',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='fans',
     )
 
     class Meta:
