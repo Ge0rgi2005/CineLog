@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit Movie{% else %}Add Movie{% endif %} — CineLog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-body p-4">
+            <h2 class="mb-4">{% if object %}Edit {{ object.movie_title }}{% else %}Add New Movie{% endif %}</h2>
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        {% if object %}Save Changes{% else %}Add Movie{% endif %}
+                    </button>
+                    <a href="{% if object %}{% url 'films:movie-detail' object.pk %}
+                             {% else %}{% url 'films:movie-list' %}{% endif %}"
+                       class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

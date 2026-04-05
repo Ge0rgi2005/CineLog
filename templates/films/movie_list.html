@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Movies — CineLog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">All Movies</h2>
+        {% if user.is_staff %}
+        <a href="{% url 'films:movie-create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Movie
+        </a>
+        {% endif %}
+    </div>
+
+
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <label>
+                <input type="text" name="search" class="form-control"
+                       placeholder="Search by title or director..."
+                       value="{{ search }}">
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label>
+                <select name="genre" class="form-select">
+                    <option value="">All Genres</option>
+                    {% for genre in genres %}
+                    <option value="{{ genre.slug }}"
+                        {% if selected_genre == genre.slug %}selected{% endif %}>
+                        {{ genre.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-dark w-100">Filter</button>
+        </div>
+    </form>
+
+    <div class="row g-4">
+        {% for movie in movies %}
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card h-100 shadow-sm">
+                {% if movie.poster %}
+                <img src="{{ movie.poster.url }}"
+                     class="card-img-top poster-img" alt="{{ movie.movie_title }}">
+                {% else %}
+                <div class="card-img-top poster-img bg-secondary d-flex
+                            align-items-center justify-content-center">
+                    <i class="bi bi-film text-white" style="font-size:3rem;"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.movie_title }}</h5>
+                    <p class="text-muted small mb-1">{{ movie.director }} · {{ movie.year }}</p>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        {% for genre in movie.genre.all %}
+                        <span class="badge bg-secondary">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% if movie.average_rating %}
+                    <span class="badge bg-warning text-dark">
+                        <i class="bi bi-star-fill"></i> {{ movie.average_rating }}/10
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'films:movie-detail' movie.pk %}"
+                       class="btn btn-sm btn-outline-dark w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-muted text-center py-5">No movies found matching your search.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

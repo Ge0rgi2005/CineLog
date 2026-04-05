@@ -1,0 +1,38 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.poster-img {
+    height: 300px;
+    object-fit: cover;
+}
+
+.rating-badge {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 80px 0;
+}

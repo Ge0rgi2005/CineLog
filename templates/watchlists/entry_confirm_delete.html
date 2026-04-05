@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Remove Movie — CineLog{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="form-container">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body p-4 text-center">
+                <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size:3rem;"></i>
+                <h3 class="mt-3">
+                    Remove "{{ object.movie.movie_title }}" from "{{ object.watchlist.list_title }}"?
+                </h3>
+                <p class="text-muted">The movie itself will not be deleted.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <button type="submit" class="btn btn-danger btn-lg">Yes, Remove</button>
+                        <a href="{% url 'watchlists:watchlist-detail' object.watchlist.pk %}"
+                           class="btn btn-outline-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

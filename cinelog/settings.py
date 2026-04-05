@@ -144,3 +144,12 @@ LOGIN_REDIRECT_URL = 'films:index'
 LOGOUT_REDIRECT_URL = 'films:index'
 
 AUTH_USER_MODEL = 'accounts.AppUser'
+
+#DRF Settings
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+}
