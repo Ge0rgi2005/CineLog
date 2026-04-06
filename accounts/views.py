@@ -4,21 +4,27 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DetailView
-
 from .forms import RegisterForm, LoginForm, EditProfileForm
+from accounts.tasks import send_welcome_email
+from django.contrib.messages.views import SuccessMessageMixin
 
 UserModel = get_user_model()
 
-
-class RegisterView(CreateView):
+class RegisterView(SuccessMessageMixin, CreateView):
+    success_message = "Your CineLog journey starts here!"
     model = UserModel
     form_class = RegisterForm
     template_name = 'accounts/register.html'
     success_url = reverse_lazy('films:movie-list')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
+        response = super ().form_valid ( form )
+        login ( self.request, self.object )
+
+        send_welcome_email.delay (
+            self.object.username,
+            self.object.user_email,
+        )
         return response
 
     def dispatch(self, request, *args, **kwargs):
@@ -51,7 +57,8 @@ class ProfileView(DetailView):
         return context
 
 
-class EditProfileView(LoginRequiredMixin, UpdateView):
+class EditProfileView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    success_message = "Your profile has been updated."
     model = UserModel
     form_class = EditProfileForm
     template_name = 'accounts/profile_editor.html'

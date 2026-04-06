@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
 from .forms import MovieForm, CastMemberForm
 from .models import Movie, Genre
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class MovieListView(ListView):
@@ -49,7 +49,8 @@ class MovieDetailView(DetailView):
         return context
 
 
-class MovieCreateView(LoginRequiredMixin, CreateView):
+class MovieCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    success_message = "%(movie_title)s was added successfully."
     model = Movie
     form_class = MovieForm
     template_name = 'films/movie_form.html'
@@ -58,7 +59,8 @@ class MovieCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy('films:movie-detail', kwargs={'pk': self.object.pk})
 
 
-class MovieUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class MovieUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
+    success_message = "%(movie_title)s was updated successfully."
     model = Movie
     form_class = MovieForm
     template_name = 'films/movie_form.html'

@@ -9,52 +9,52 @@ class RegisterForm(UserCreationForm):
         required=True,
         label='Email',
         widget=forms.EmailInput(attrs={
-                'placeholder': 'Your email address goes here',
-                'class': 'form-control',
-            }),
+            'placeholder': 'Your email address goes here',
+            'class': 'form-control',
+        }),
         help_text='It is our solemn promise that we will never share your email with anyone else',
     )
 
     class Meta:
         model = UserModel
-        fields = ('username', 'email', 'password', 'confirm_password')
+        fields = ('username', 'email', 'password1', 'password2')
         widgets = {
-            'username': forms.TextInput ( attrs={
+            'username': forms.TextInput(attrs={
                 'placeholder': 'Get your inner hero on and choose a username',
                 'class': 'form-control',
-            } ),
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['password'].widget.attrs.update({
+        self.fields['password1'].widget.attrs.update({
             'placeholder': 'The stronger your password, the better',
             'class': 'form-control',
         })
-        self.fields['confirm_password'].widget.attrs.update({
+        self.fields['password2'].widget.attrs.update({
             'placeholder': 'Confirm your password just to be safe',
             'class': 'form-control',
         })
-        self.fields['password'].help_text = "Password must be at least 8 characters long"
-        self.fields['confirm_password'].help_text = "Enter your password again"
+        self.fields['password1'].help_text = "Password must be at least 8 characters long"
+        self.fields['password2'].help_text = "Enter your password again"
 
-def clean_email(self):
-    email = self.cleaned_data.get('email')
-    if not email:
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email:
+            return email
+        if UserModel.objects.filter(email=email).exists():
+            raise forms.ValidationError("An account with this email already exists.")
         return email
-    if UserModel.objects.filter(email=email).exists():
-        raise forms.ValidationError("An account with this email already exists.")
-    return email
 
-def clean_username(self):
-    username = self.cleaned_data.get('username')
-    if not username:
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if not username:
+            return username
+        if len(username) < 3:
+            raise forms.ValidationError("Username must be at least 3 characters long.")
+        if not username.isalnum():
+            raise forms.ValidationError("Username can only contain letters and numbers.")
         return username
-    if len(username) < 3:
-        raise forms.ValidationError("Username must be at least 3 characters long.")
-    if not username.isalnum():
-        raise forms.ValidationError("Username can only contain letters and numbers.")
-    return username
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -82,7 +82,7 @@ class LoginForm(AuthenticationForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = UserModel
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'profile_avatar', 'favourite_genre')
+        fields = ('username', 'email', 'first_name', 'last_name', 'profile_bio', 'profile_avatar', 'favourite_genre')
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -98,7 +98,7 @@ class EditProfileForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Your last name',
             }),
-            'bio': forms.Textarea(attrs={
+            'profile_bio': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
                 'placeholder': 'Introduce yourself to fellow Cineloggers',

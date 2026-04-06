@@ -9,13 +9,13 @@ class ReviewCommentInline(admin.TabularInline):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ('review_author', 'reviewed_movie', 'rating', 'is_featured', 'written_at')
+    list_display = ('author', 'film', 'rating', 'is_featured', 'created_at')
     list_filter = ('is_featured', 'rating')
-    search_fields = ('review_author__username', 'review_title')
+    search_fields = ('author__username', 'film__movie_title')
     inlines = [ReviewCommentInline]
 
 
 @admin.register(ReviewComment)
 class ReviewCommentAdmin(admin.ModelAdmin):
-    list_display = ('comment_author', 'commented_review', 'written_at')
-    search_fields = ('comment_author__username',)
+    list_display = ('author', 'review', 'created_at')
+    search_fields = ('author__username',)
